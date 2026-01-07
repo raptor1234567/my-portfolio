@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ahammed Yasin S | Unity Developer</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800;900&display=swap" rel="stylesheet">
     
@@ -31,7 +31,6 @@
             color: var(--text-main); 
             font-family: var(--font-main);
             overflow-x: hidden;
-            /* Dynamic Main Background */
             background-image: 
                 radial-gradient(circle at 50% 0%, rgba(112, 0, 255, 0.15), transparent 60%),
                 linear-gradient(180deg, var(--bg-color) 0%, #0a0a12 100%);
@@ -43,14 +42,79 @@
         a { text-decoration: none; color: inherit; transition: 0.3s; }
         ul { list-style: none; }
         .hidden { display: none !important; }
-        .fade-in { animation: fadeInUp 1s ease-out; }
+
+        /* --- 3. LOADING... SCREEN (UPDATED TEXT) --- */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #050508;
+            z-index: 99999; /* Always on top */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+        }
+        
+        .loader-logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px var(--primary);
+            animation: pulse 1.5s infinite alternate;
+            text-transform: uppercase;
+        }
+        
+        .loader-bar-bg {
+            width: 250px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loader-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 15px var(--primary);
+            /* Loading... Animation */
+            animation: loadProgress 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        
+        .loader-text {
+            margin-top: 15px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; text-shadow: 0 0 30px var(--primary); } }
+        @keyframes loadProgress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
+
+        /* --- ANIMATIONS (SCROLL TRIGGER) --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .fade-in { animation: fadeInUp 1s ease-out 2.8s backwards; } /* Delayed start after loader */
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- 3. FLOATING NAV (CENTERED) --- */
+        /* --- 4. FLOATING NAV (PC) --- */
         nav {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 9999; /* High Z-Index to stay on top */
-            display: flex; align-items: center; justify-content: space-between; /* Keeps spacing correct */
+            z-index: 9999; 
+            display: flex; align-items: center; justify-content: space-between; 
             gap: 20px;
             padding: 15px 40px;
             width: 90%; max-width: 1000px;
@@ -61,7 +125,6 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
         
-        /* Empty div to replace Logo and keep layout balanced */
         .spacer { width: 24px; } 
         
         .nav-links { display: flex; gap: 30px; }
@@ -73,7 +136,7 @@
         .settings-btn { font-size: 1.2rem; cursor: pointer; transition: 0.5s; color: #fff; }
         .settings-btn:hover { transform: rotate(180deg); color: var(--primary); }
 
-        /* --- 4. HERO SECTION (PAGE 1) --- */
+        /* --- 5. HERO SECTION --- */
         header {
             min-height: 100vh; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -110,7 +173,7 @@
         }
         .btn-glow:hover { transform: scale(1.05); box-shadow: 0 0 50px var(--primary); color: var(--primary); background: #fff; }
 
-        /* --- 5. SECTIONS --- */
+        /* --- 6. SECTIONS --- */
         .section { padding: 120px 5%; max-width: 1400px; margin: 0 auto; }
         .section-title {
             font-size: 3rem; font-weight: 800; margin-bottom: 80px; text-transform: uppercase;
@@ -121,7 +184,7 @@
             margin: 20px auto 0; border-radius: 10px;
         }
 
-        /* --- PAGE BACKGROUNDS --- */
+        /* --- BACKGROUNDS --- */
         #profile {
             background-image: linear-gradient(to bottom, rgba(5, 5, 8, 0.9), rgba(5, 5, 8, 0.8)), url('profile-bg.jpg'); 
             background-size: cover; background-position: center;
@@ -142,7 +205,7 @@
             background-attachment: fixed;
         }
 
-        /* --- 6. GLASS CARDS (WORKS) --- */
+        /* --- 7. CARDS & GRIDS --- */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; text-align: left; }
         
         .card {
@@ -159,7 +222,7 @@
         .card p { color: var(--text-dim); line-height: 1.6; font-size: 0.95rem; margin-bottom: 25px; }
         .card-link { font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
 
-        /* --- 7. MISSION CARDS --- */
+        /* --- 8. MISSION CARDS --- */
         .mission-card {
             height: 550px; border-radius: 30px; position: relative; overflow: hidden; cursor: pointer;
             border: 1px solid var(--border); transition: 0.4s;
@@ -178,7 +241,7 @@
         }
         .mission-card:hover .mission-bg { transform: scale(1.1); }
 
-        /* --- 8. STATS --- */
+        /* --- 9. STATS --- */
         .stats-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 40px; justify-content: center; }
         .stat-pill {
             padding: 15px 30px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
@@ -187,7 +250,7 @@
         .stat-val { font-size: 1.5rem; font-weight: 800; color: #fff; display: block; }
         .stat-lbl { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- 9. CONTACT LAYOUT --- */
+        /* --- 10. CONTACT --- */
         .contact-container {
             display: flex; flex-wrap: wrap; gap: 50px;
             background: rgba(15, 15, 20, 0.6); backdrop-filter: blur(20px);
@@ -231,11 +294,11 @@
             font-size: 1.3rem;
         }
 
-        /* --- 10. SETTINGS PANEL --- */
+        /* --- 11. SETTINGS PANEL --- */
         #settings {
-            position: fixed; top: 0; right: -350px; width: 350px; height: 100%;
+            position: fixed; top: 0; right: -350px; width: 300px; height: 100%;
             background: #08080a; border-left: 1px solid var(--border);
-            z-index: 10000; padding: 40px; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
+            z-index: 20000; padding: 40px; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
             text-align: left;
         }
         #settings.active { right: 0; }
@@ -244,62 +307,50 @@
         .color-dot { width: 12px; height: 12px; border-radius: 50%; }
 
         /* ========================================= */
-        /* --- MOBILE FIXES (CRITICAL) --- */
+        /* --- MOBILE OPTIMIZATION --- */
         /* ========================================= */
         @media (max-width: 768px) {
             
-            /* 1. FORCE SCROLL BACKGROUNDS (Fixes disappearing images on Mobile) */
+            /* SCROLL FIX */
             body, header, #profile, #works, #contact {
                 background-attachment: scroll !important;
                 background-position: center center !important;
                 background-size: cover !important;
             }
 
-            /* 2. HEADER TEXT SIZE */
-            h1 { font-size: 3.5rem; } 
-            
-            /* 3. MOBILE NAVIGATION (Floating Glass) */
+            /* NAV FIX */
             nav {
-                width: 90%; 
-                justify-content: flex-end; /* Pushes gear to right since logo is hidden */
-                padding: 15px 25px;
+                width: 95%; padding: 10px 15px;
+                justify-content: center; gap: 10px; top: 10px;
+                background: rgba(10, 10, 15, 0.95);
             }
-            
-            /* Hide Links */
-            .nav-links { display: none; }
-            /* Hide Spacer */
+            .nav-links { display: flex; gap: 12px; }
+            .nav-links a { font-size: 0.75rem; letter-spacing: 0.5px; }
             .spacer { display: none; }
+            .settings-btn { display: block; font-size: 1.2rem; margin-left: 10px; }
 
-            /* Settings Button Visibility */
-            .settings-btn {
-                display: block;
-                font-size: 1.5rem;
-                padding: 5px;
-                color: #fff;
-            }
-
-            /* 4. LAYOUT ADJUSTMENTS */
+            /* LAYOUT */
+            h1 { font-size: 3.5rem; } 
             .section { padding: 80px 20px; }
+            .grid { grid-template-columns: 1fr; gap: 30px; }
             
-            .contact-container { 
-                flex-direction: column; 
-                text-align: center; 
-                padding: 30px; 
-            }
-            .contact-profile { 
-                border-right: none; 
-                border-bottom: 1px solid var(--border); 
-                padding-right: 0; 
-                padding-bottom: 30px; 
-                margin-bottom: 30px; 
-                width: 100%; 
-            }
+            .contact-container { flex-direction: column; padding: 30px 20px; }
+            .contact-profile { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 30px; width: 100%; }
             .contact-info { padding-left: 0; width: 100%; }
             .contact-row { justify-content: center; text-align: left; font-size: 0.9rem; }
+            #settings { width: 80%; }
         }
     </style>
 </head>
 <body>
+
+    <div id="loader">
+        <div class="loader-logo">Loading...</div>
+        <div class="loader-bar-bg">
+            <div class="loader-bar-fill"></div>
+        </div>
+        <div class="loader-text">Initializing Systems...</div>
+    </div>
 
     <div id="settings">
         <div style="display:flex; justify-content:space-between; margin-bottom:30px;">
@@ -313,14 +364,12 @@
 
     <nav>
         <div class="spacer"></div>
-        
         <div class="nav-links">
             <a href="#home">Home</a>
             <a href="#profile">Profile</a>
             <a href="#works">Works</a>
             <a href="#contact">Contact</a>
         </div>
-        
         <div class="settings-btn" onclick="toggleSettings()">⚙</div>
     </nav>
 
@@ -334,13 +383,13 @@
         <button class="btn-glow fade-in" style="animation-delay: 0.3s;" onclick="location.href='#works'">Explore Projects</button>
     </header>
 
-    <section id="profile" class="section">
+    <section id="profile" class="section reveal">
         <h2 class="section-title">Profile Data</h2>
         <p style="font-size:1.2rem; color:var(--text-dim); max-width:800px; margin:0 auto 40px auto; line-height:1.8;">
             My name is <strong style="color:#fff">Ahammed Yasin S</strong>. I am a Unity Developer trained at <span style="color:var(--primary)">Malger Entertainments</span>. 
             I specialize in scalable C# architecture, VR/AR interactions, and polished UI systems.
         </p>
-        <div class="stats-row">
+        <div class="stats-row reveal">
             <div class="stat-pill"><span class="stat-val">C#</span><span class="stat-lbl">Expertise</span></div>
             <div class="stat-pill"><span class="stat-val">3D</span><span class="stat-lbl">Physics</span></div>
             <div class="stat-pill"><span class="stat-val">VR</span><span class="stat-lbl">Oculus</span></div>
@@ -348,10 +397,10 @@
         </div>
     </section>
 
-    <section id="works" class="section">
+    <section id="works" class="section reveal">
         <h2 class="section-title">Selected Works</h2>
         <div class="grid">
-            <div class="card">
+            <div class="card reveal">
                 <div class="card-img-box">
                     <img src="taxi.jpg" class="card-img" onerror="this.src='https://placehold.co/600x400/111/7000ff?text=TAXI+GAME'">
                 </div>
@@ -362,7 +411,7 @@
                     <div class="card-link" style="color:var(--primary)">View Details →</div>
                 </div>
             </div>
-            <div class="card">
+            <div class="card reveal">
                 <div class="card-img-box">
                     <img src="parking.jpg" class="card-img" onerror="this.src='https://placehold.co/600x400/111/7000ff?text=PARKING+SIM'">
                 </div>
@@ -376,24 +425,24 @@
         </div>
     </section>
 
-    <section class="section">
+    <section class="section reveal">
         <h2 class="section-title">Mission Types</h2>
         <div class="grid">
-            <div class="mission-card is-2d" onclick="alert('View 2D Projects')">
+            <div class="mission-card is-2d reveal" onclick="alert('View 2D Projects')">
                 <div class="mission-bg"></div>
                 <div class="mission-overlay">
                     <span class="tag" style="color:var(--secondary)">ARCADE</span>
                     <h3 style="font-size:2.5rem; margin:0;">2D Games</h3>
                 </div>
             </div>
-            <div class="mission-card is-3d" onclick="alert('View 3D Projects')">
+            <div class="mission-card is-3d reveal" onclick="alert('View 3D Projects')">
                 <div class="mission-bg"></div>
                 <div class="mission-overlay">
                     <span class="tag" style="color:var(--secondary)">SIMULATION</span>
                     <h3 style="font-size:2.5rem; margin:0;">3D Worlds</h3>
                 </div>
             </div>
-            <div class="mission-card is-vr" onclick="alert('View VR Projects')">
+            <div class="mission-card is-vr reveal" onclick="alert('View VR Projects')">
                 <div class="mission-bg"></div>
                 <div class="mission-overlay">
                     <span class="tag" style="color:var(--secondary)">IMMERSIVE</span>
@@ -403,17 +452,16 @@
         </div>
     </section>
 
-    <section id="contact" class="section">
+    <section id="contact" class="section reveal">
         <h2 class="section-title">Connect</h2>
         
-        <div class="contact-container">
+        <div class="contact-container reveal">
             <div class="contact-profile">
                 <div class="profile-img-box">
                     <img src="profile.jpg" alt="Profile" class="profile-img" onerror="this.src='https://placehold.co/200x200/111/7000ff?text=User'"> 
                 </div>
                 <h3 class="contact-name">Ahammed Yasin S.</h3>
                 <p class="contact-role">Unity Game Developer</p>
-                
                 <div class="social-links">
                     <a href="https://linkedin.com" target="_blank" class="social-btn">In</a>
                     <a href="https://github.com" target="_blank" class="social-btn">Gh</a>
@@ -426,7 +474,6 @@
                     I am Ahammed Yasin S., a certified Unity Developer. I am passionate about game programming, arts, and developing immersive experiences. 
                     If you liked my work (I like you already!), let's get in touch.
                 </p>
-                
                 <div class="contact-details">
                     <div class="contact-row">
                         <div class="icon-box">✉</div>
@@ -450,6 +497,7 @@
     </footer>
 
     <script>
+        // SETTINGS TOGGLE
         function toggleSettings() {
             document.getElementById('settings').classList.toggle('active');
         }
@@ -458,6 +506,31 @@
             document.documentElement.style.setProperty('--secondary', secondary);
             document.documentElement.style.setProperty('--glow', `0 0 50px ${primary}40`);
         }
+
+        // REMOVE LOADER AFTER 2.5s
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 2500);
+        });
+
+        // SCROLL REVEAL SCRIPT
+        window.addEventListener('scroll', reveal);
+        function reveal(){
+            var reveals = document.querySelectorAll('.reveal');
+            for(var i = 0; i < reveals.length; i++){
+                var windowheight = window.innerHeight;
+                var revealtop = reveals[i].getBoundingClientRect().top;
+                var revealpoint = 150;
+                if(revealtop < windowheight - revealpoint){
+                    reveals[i].classList.add('active');
+                }
+            }
+        }
+        // Trigger once on load
+        reveal();
     </script>
 
 </body>
