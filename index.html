@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ahammed Yasin S | Unity Developer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. VARIABLES & THEMES --- */
+        :root {
+            /* Default Theme: Royal Violet */
+            --primary: #7000ff; 
+            --secondary: #00d4ff;
+            --bg-color: #050508;
+            --text-main: #ffffff;
+            --text-dim: #8f90a0;
+            
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --glow: 0 0 50px rgba(112, 0, 255, 0.3);
+            
+            --font-main: 'Outfit', sans-serif;
+        }
+
+        /* --- 2. GLOBAL STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(112, 0, 255, 0.15), transparent 60%),
+                linear-gradient(180deg, var(--bg-color) 0%, #0a0a12 100%);
+            background-attachment: fixed;
+            scroll-behavior: smooth;
+            text-align: center;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+        .hidden { display: none !important; }
+
+        /* --- 3. LOADING... SCREEN (UPDATED TEXT) --- */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #050508;
+            z-index: 99999; /* Always on top */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+        }
+        
+        .loader-logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px var(--primary);
+            animation: pulse 1.5s infinite alternate;
+            text-transform: uppercase;
+        }
+        
+        .loader-bar-bg {
+            width: 250px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loader-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 15px var(--primary);
+            /* Loading... Animation */
+            animation: loadProgress 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        
+        .loader-text {
+            margin-top: 15px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; text-shadow: 0 0 30px var(--primary); } }
+        @keyframes loadProgress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
+
+        /* --- ANIMATIONS (SCROLL TRIGGER) --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .fade-in { animation: fadeInUp 1s ease-out 2.8s backwards; } /* Delayed start after loader */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- 4. FLOATING NAV (PC) --- */
+        nav {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; 
+            display: flex; align-items: center; justify-content: space-between; 
+            gap: 20px;
+            padding: 15px 40px;
+            width: 90%; max-width: 1000px;
+            background: rgba(10, 10, 15, 0.8); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .spacer { width: 24px; } 
+        
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { 
+            font-size: 0.85rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;
+        }
+        .nav-links a:hover { color: var(--text-main); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+        .settings-btn { font-size: 1.2rem; cursor: pointer; transition: 0.5s; color: #fff; }
+        .settings-btn:hover { transform: rotate(180deg); color: var(--primary); }
+
+        /* --- 5. HERO SECTION --- */
+        header {
+            min-height: 100vh; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 0 20px; position: relative;
+            background-image: linear-gradient(to bottom, rgba(5, 5, 8, 0.7), rgba(5, 5, 8, 1)), url('home.jpg'); 
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        
+        .hero-badge {
+            padding: 8px 20px; border-radius: 50px; 
+            background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border: 1px solid var(--border); color: var(--secondary);
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        h1 { 
+            font-size: 7vw; line-height: 1; font-weight: 900; margin-bottom: 30px; text-transform: uppercase;
+            background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 80px rgba(255,255,255,0.1);
+        }
+        
+        .hero-desc { 
+            font-size: 1.2rem; color: var(--text-dim); max-width: 600px; margin-bottom: 50px; line-height: 1.6;
+        }
+
+        .btn-glow {
+            padding: 18px 45px; border-radius: 50px;
+            background: var(--text-main); color: #000;
+            font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+            transition: 0.3s; cursor: pointer; border: none;
+        }
+        .btn-glow:hover { transform: scale(1.05); box-shadow: 0 0 50px var(--primary); color: var(--primary); background: #fff; }
+
+        /* --- 6. SECTIONS --- */
+        .section { padding: 120px 5%; max-width: 1400px; margin: 0 auto; }
+        .section-title {
+            font-size: 3rem; font-weight: 800; margin-bottom: 80px; text-transform: uppercase;
+            display: inline-block; position: relative;
+        }
+        .section-title::after {
+            content: ''; display: block; width: 60px; height: 4px; background: var(--primary);
+            margin: 20px auto 0; border-radius: 10px;
+        }
+
+        /* --- BACKGROUNDS --- */
+        #profile {
+            background-image: linear-gradient(to bottom, rgba(5, 5, 8, 0.9), rgba(5, 5, 8, 0.8)), url('profile-bg.jpg'); 
+            background-size: cover; background-position: center;
+            border-radius: 30px; margin-top: 50px; margin-bottom: 50px;
+            background-attachment: fixed;
+        }
+        #works {
+            background-image: linear-gradient(to bottom, rgba(5, 5, 8, 0.9), rgba(5, 5, 8, 0.8)), url('works-bg.jpg'); 
+            background-size: cover; background-position: center;
+            border-radius: 30px; margin-top: 50px; margin-bottom: 50px;
+            background-attachment: fixed;
+        }
+        #contact {
+            background-image: linear-gradient(to top, rgba(5, 5, 8, 0.95), rgba(5, 5, 8, 0.85)), url('contact-bg.jpg');
+            background-size: cover; background-position: center;
+            border-radius: 30px; margin-top: 50px; margin-bottom: 50px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-attachment: fixed;
+        }
+
+        /* --- 7. CARDS & GRIDS --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; text-align: left; }
+        
+        .card {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 24px;
+            overflow: hidden; transition: 0.4s; position: relative;
+        }
+        .card:hover { transform: translateY(-15px); border-color: var(--primary); box-shadow: var(--glow); }
+        .card-img-box { height: 250px; overflow: hidden; position: relative; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card:hover .card-img { transform: scale(1.1); }
+        .card-body { padding: 35px; }
+        .tag { color: var(--secondary); font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .card h3 { font-size: 1.8rem; margin-bottom: 15px; }
+        .card p { color: var(--text-dim); line-height: 1.6; font-size: 0.95rem; margin-bottom: 25px; }
+        .card-link { font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
+
+        /* --- 8. MISSION CARDS --- */
+        .mission-card {
+            height: 550px; border-radius: 30px; position: relative; overflow: hidden; cursor: pointer;
+            border: 1px solid var(--border); transition: 0.4s;
+        }
+        .mission-card:hover { border-color: var(--secondary); transform: scale(0.98); }
+        .mission-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center; transition: 0.5s;
+        }
+        .mission-card.is-2d .mission-bg { background-image: url('image2d.jpg'); }
+        .mission-card.is-3d .mission-bg { background-image: url('image3d.jpg'); }
+        .mission-card.is-vr .mission-bg { background-image: url('imagevr.jpg'); }
+        .mission-overlay {
+            position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+            display: flex; flex-direction: column; justify-content: flex-end; padding: 40px; text-align: left;
+        }
+        .mission-card:hover .mission-bg { transform: scale(1.1); }
+
+        /* --- 9. STATS --- */
+        .stats-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 40px; justify-content: center; }
+        .stat-pill {
+            padding: 15px 30px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            border-radius: 15px; text-align: center; min-width: 140px;
+        }
+        .stat-val { font-size: 1.5rem; font-weight: 800; color: #fff; display: block; }
+        .stat-lbl { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- 10. CONTACT --- */
+        .contact-container {
+            display: flex; flex-wrap: wrap; gap: 50px;
+            background: rgba(15, 15, 20, 0.6); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 30px;
+            padding: 50px; max-width: 1100px; width: 100%; margin: 0 auto;
+            align-items: center; text-align: left;
+        }
+        .contact-profile {
+            flex: 1; min-width: 250px; text-align: center;
+            border-right: 1px solid var(--border); padding-right: 30px;
+        }
+        .contact-info { flex: 2; min-width: 300px; padding-left: 20px; }
+        
+        .profile-img-box {
+            width: 180px; height: 180px; border-radius: 50%; overflow: hidden;
+            margin: 0 auto 20px; border: 4px solid var(--primary);
+            box-shadow: 0 0 30px rgba(112, 0, 255, 0.4);
+        }
+        .profile-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .contact-name { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; color: var(--text-main); }
+        .contact-role { color: var(--secondary); font-size: 0.9rem; margin-bottom: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .social-links { display: flex; justify-content: center; gap: 15px; }
+        .social-btn {
+            width: 45px; height: 45px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: bold; border: 1px solid var(--border); transition: 0.3s;
+            font-size: 1.2rem;
+        }
+        .social-btn:hover { background: var(--primary); transform: scale(1.1); border-color: var(--primary); }
+
+        .contact-bio { color: var(--text-dim); line-height: 1.8; margin-bottom: 30px; font-size: 1.1rem; }
+        
+        .contact-details { display: flex; flex-direction: column; gap: 20px; }
+        .contact-row { display: flex; align-items: center; gap: 20px; color: var(--text-main); font-size: 1.1rem; font-weight: 500; }
+        .icon-box {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: var(--secondary); color: #000;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        /* --- 11. SETTINGS PANEL --- */
+        #settings {
+            position: fixed; top: 0; right: -350px; width: 300px; height: 100%;
+            background: #08080a; border-left: 1px solid var(--border);
+            z-index: 20000; padding: 40px; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
+            text-align: left;
+        }
+        #settings.active { right: 0; }
+        .opt-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; cursor: pointer; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
+        .opt-row:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+        .color-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+        /* ========================================= */
+        /* --- MOBILE OPTIMIZATION --- */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            
+            /* SCROLL FIX */
+            body, header, #profile, #works, #contact {
+                background-attachment: scroll !important;
+                background-position: center center !important;
+                background-size: cover !important;
+            }
+
+            /* NAV FIX */
+            nav {
+                width: 95%; padding: 10px 15px;
+                justify-content: center; gap: 10px; top: 10px;
+                background: rgba(10, 10, 15, 0.95);
+            }
+            .nav-links { display: flex; gap: 12px; }
+            .nav-links a { font-size: 0.75rem; letter-spacing: 0.5px; }
+            .spacer { display: none; }
+            .settings-btn { display: block; font-size: 1.2rem; margin-left: 10px; }
+
+            /* LAYOUT */
+            h1 { font-size: 3.5rem; } 
+            .section { padding: 80px 20px; }
+            .grid { grid-template-columns: 1fr; gap: 30px; }
+            
+            .contact-container { flex-direction: column; padding: 30px 20px; }
+            .contact-profile { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 30px; width: 100%; }
+            .contact-info { padding-left: 0; width: 100%; }
+            .contact-row { justify-content: center; text-align: left; font-size: 0.9rem; }
+            #settings { width: 80%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-logo">Loading...</div>
+        <div class="loader-bar-bg">
+            <div class="loader-bar-fill"></div>
+        </div>
+        <div class="loader-text">Initializing Systems...</div>
+    </div>
+
+    <div id="settings">
+        <div style="display:flex; justify-content:space-between; margin-bottom:30px;">
+            <h4 style="text-transform:uppercase; letter-spacing:2px;">Interface Theme</h4>
+            <span onclick="toggleSettings()" style="cursor:pointer; font-size:1.5rem;">×</span>
+        </div>
+        <div class="opt-row" onclick="setTheme('#7000ff', '#00d4ff')"><div class="color-dot" style="background:#7000ff;"></div> <span>Royal Violet</span></div>
+        <div class="opt-row" onclick="setTheme('#ff0055', '#ffcc00')"><div class="color-dot" style="background:#ff0055;"></div> <span>Cyber Punk</span></div>
+        <div class="opt-row" onclick="setTheme('#00ff88', '#00ffff')"><div class="color-dot" style="background:#00ff88;"></div> <span>Neon Mint</span></div>
+    </div>
+
+    <nav>
+        <div class="spacer"></div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#profile">Profile</a>
+            <a href="#works">Works</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <div class="settings-btn" onclick="toggleSettings()">⚙</div>
+    </nav>
+
+    <header id="home">
+        <div class="hero-badge fade-in">Unity Certified Developer</div>
+        <h1 class="fade-in" style="animation-delay: 0.1s;">Ahammed<br>Yasin S.</h1>
+        <p class="hero-desc fade-in" style="animation-delay: 0.2s;">
+            Engineering high-fidelity 3D physics and immersive gameplay loops. 
+            Bridging the gap between creative vision and technical execution.
+        </p>
+        <button class="btn-glow fade-in" style="animation-delay: 0.3s;" onclick="location.href='#works'">Explore Projects</button>
+    </header>
+
+    <section id="profile" class="section reveal">
+        <h2 class="section-title">Profile Data</h2>
+        <p style="font-size:1.2rem; color:var(--text-dim); max-width:800px; margin:0 auto 40px auto; line-height:1.8;">
+            My name is <strong style="color:#fff">Ahammed Yasin S</strong>. I am a Unity Developer trained at <span style="color:var(--primary)">Malger Entertainments</span>. 
+            I specialize in scalable C# architecture, VR/AR interactions, and polished UI systems.
+        </p>
+        <div class="stats-row reveal">
+            <div class="stat-pill"><span class="stat-val">C#</span><span class="stat-lbl">Expertise</span></div>
+            <div class="stat-pill"><span class="stat-val">3D</span><span class="stat-lbl">Physics</span></div>
+            <div class="stat-pill"><span class="stat-val">VR</span><span class="stat-lbl">Oculus</span></div>
+            <div class="stat-pill"><span class="stat-val">UI</span><span class="stat-lbl">Systems</span></div>
+        </div>
+    </section>
+
+    <section id="works" class="section reveal">
+        <h2 class="section-title">Selected Works</h2>
+        <div class="grid">
+            <div class="card reveal">
+                <div class="card-img-box">
+                    <img src="taxi.jpg" class="card-img" onerror="this.src='https://placehold.co/600x400/111/7000ff?text=TAXI+GAME'">
+                </div>
+                <div class="card-body">
+                    <span class="tag">Mobile • Puzzle</span>
+                    <h3>Taxi Jam Sorting</h3>
+                    <p>Complex grid-based vehicle routing system with A* pathfinding algorithms optimized for mobile.</p>
+                    <div class="card-link" style="color:var(--primary)">View Details →</div>
+                </div>
+            </div>
+            <div class="card reveal">
+                <div class="card-img-box">
+                    <img src="parking.jpg" class="card-img" onerror="this.src='https://placehold.co/600x400/111/7000ff?text=PARKING+SIM'">
+                </div>
+                <div class="card-body">
+                    <span class="tag">Simulation • Physics</span>
+                    <h3>Car Parking Sim</h3>
+                    <p>Realistic driving mechanics featuring custom wheel friction curves and Ackermann steering geometry.</p>
+                    <div class="card-link" style="color:var(--primary)">View Details →</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <h2 class="section-title">Mission Types</h2>
+        <div class="grid">
+            <div class="mission-card is-2d reveal" onclick="alert('View 2D Projects')">
+                <div class="mission-bg"></div>
+                <div class="mission-overlay">
+                    <span class="tag" style="color:var(--secondary)">ARCADE</span>
+                    <h3 style="font-size:2.5rem; margin:0;">2D Games</h3>
+                </div>
+            </div>
+            <div class="mission-card is-3d reveal" onclick="alert('View 3D Projects')">
+                <div class="mission-bg"></div>
+                <div class="mission-overlay">
+                    <span class="tag" style="color:var(--secondary)">SIMULATION</span>
+                    <h3 style="font-size:2.5rem; margin:0;">3D Worlds</h3>
+                </div>
+            </div>
+            <div class="mission-card is-vr reveal" onclick="alert('View VR Projects')">
+                <div class="mission-bg"></div>
+                <div class="mission-overlay">
+                    <span class="tag" style="color:var(--secondary)">IMMERSIVE</span>
+                    <h3 style="font-size:2.5rem; margin:0;">VR / AR</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section reveal">
+        <h2 class="section-title">Connect</h2>
+        
+        <div class="contact-container reveal">
+            <div class="contact-profile">
+                <div class="profile-img-box">
+                    <img src="profile.jpg" alt="Profile" class="profile-img" onerror="this.src='https://placehold.co/200x200/111/7000ff?text=User'"> 
+                </div>
+                <h3 class="contact-name">Ahammed Yasin S.</h3>
+                <p class="contact-role">Unity Game Developer</p>
+                <div class="social-links">
+                    <a href="https://linkedin.com" target="_blank" class="social-btn">In</a>
+                    <a href="https://github.com" target="_blank" class="social-btn">Gh</a>
+                    <a href="mailto:ahammedyasin1s@gmail.com" class="social-btn">@</a>
+                </div>
+            </div>
+
+            <div class="contact-info">
+                <p class="contact-bio">
+                    I am Ahammed Yasin S., a certified Unity Developer. I am passionate about game programming, arts, and developing immersive experiences. 
+                    If you liked my work (I like you already!), let's get in touch.
+                </p>
+                <div class="contact-details">
+                    <div class="contact-row">
+                        <div class="icon-box">✉</div>
+                        <span>ahammedyasin1s@gmail.com</span>
+                    </div>
+                    <div class="contact-row">
+                        <div class="icon-box">📞</div>
+                        <span>+91 6238045899</span>
+                    </div>
+                    <div class="contact-row">
+                        <div class="icon-box">💬</div>
+                        <span>+91 6238045899 (WhatsApp)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="margin-top:50px; color:#555; padding-bottom:50px;">
+        &copy; 2024 Ahammed Yasin S. System Online.
+    </footer>
+
+    <script>
+        // SETTINGS TOGGLE
+        function toggleSettings() {
+            document.getElementById('settings').classList.toggle('active');
+        }
+        function setTheme(primary, secondary) {
+            document.documentElement.style.setProperty('--primary', primary);
+            document.documentElement.style.setProperty('--secondary', secondary);
+            document.documentElement.style.setProperty('--glow', `0 0 50px ${primary}40`);
+        }
+
+        // REMOVE LOADER AFTER 2.5s
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 2500);
+        });
+
+        // SCROLL REVEAL SCRIPT
+        window.addEventListener('scroll', reveal);
+        function reveal(){
+            var reveals = document.querySelectorAll('.reveal');
+            for(var i = 0; i < reveals.length; i++){
+                var windowheight = window.innerHeight;
+                var revealtop = reveals[i].getBoundingClientRect().top;
+                var revealpoint = 150;
+                if(revealtop < windowheight - revealpoint){
+                    reveals[i].classList.add('active');
+                }
+            }
+        }
+        // Trigger once on load
+        reveal();
+    </script>
+
+</body>
+</html>
